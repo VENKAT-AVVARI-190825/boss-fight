@@ -374,6 +374,47 @@ COMMANDS USED:
   git commit -m "docs: add README.md with setup, API reference, and project overview"
   git push
 
+--------------------------------------------------------------------------------
+SECTION 19 — CODE REVIEW & FIXES
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 19:
+  "Finally review the code as per the code_review.md and provide me the
+  recommendations so as to fix the codebase"
+
+ISSUES FOUND & FIXED:
+
+  1. ALLOWED_CURRENCIES defined in 3 files (config.py, schemas.py, currency.py)
+     FIX: schemas.py and currency.py now import from config.py — single source of truth
+
+  2. Missing return type hints on 4 functions
+     FIX: Added -> str, -> None, -> tuple to index(), seed_database(),
+          list_currencies(), get_exchange_rate()
+
+  3. PEP 8 line length > 100 chars in seed.py (lines 8, 9, 10)
+     FIX: Reformatted CURRENCIES list with aligned column values
+
+  4. Redundant .upper() call in must_differ validator in schemas.py
+     FIX: Removed redundant call — value already normalised by must_be_allowed
+
+  5. 8 hardcoded hex colours outside :root in styles.css
+     FIX: Added 8 new CSS custom properties to :root and replaced all
+          hardcoded values (--blue-header, --blue-mid-hover, --blue-mid-light,
+          --input-bg, --input-readonly-bg, --btn-disabled-bg,
+          --bg-gradient-start, --bg-gradient-end)
+
+  6. pytest.approx() missing rel=1e-4 on 5 direct rate assertions
+     FIX: Added rel=1e-4 to all approx() calls in TestDirectExchangeRate
+
+RESULT: 28/28 tests passing. Committed and pushed to main.
+
+COMMANDS USED:
+  pytest tests/ -v
+  git add <files>
+  git commit -m "fix: apply code review recommendations"
+  git push
+
 ================================================================================
 END OF PROMPTS LOG
 ================================================================================
