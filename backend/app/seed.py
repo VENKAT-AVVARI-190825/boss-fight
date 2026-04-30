@@ -3,12 +3,12 @@ from app.models import Currency, CurrencyRate
 
 
 CURRENCIES = [
-    {"id": 1, "currency_code": "INR", "currency_name": "Indian Rupees", "country_name": "INDIA"},
-    {"id": 2, "currency_code": "USD", "currency_name": "US Dollars", "country_name": "USA"},
-    {"id": 3, "currency_code": "CAD", "currency_name": "Canadian Dollars", "country_name": "CANADA"},
-    {"id": 4, "currency_code": "EUR", "currency_name": "European Dollars", "country_name": "EUROPE"},
-    {"id": 5, "currency_code": "AUD", "currency_name": "Australian Dollars", "country_name": "AUSTRALIA"},
-    {"id": 6, "currency_code": "AED", "currency_name": "UAE Dirham", "country_name": "UAE"},
+    {"id": 1, "currency_code": "INR", "currency_name": "Indian Rupees",     "country_name": "INDIA"},
+    {"id": 2, "currency_code": "USD", "currency_name": "US Dollars",        "country_name": "USA"},
+    {"id": 3, "currency_code": "CAD", "currency_name": "Canadian Dollars",  "country_name": "CANADA"},
+    {"id": 4, "currency_code": "EUR", "currency_name": "European Dollars",  "country_name": "EUROPE"},
+    {"id": 5, "currency_code": "AUD", "currency_name": "Australian Dollars","country_name": "AUSTRALIA"},
+    {"id": 6, "currency_code": "AED", "currency_name": "UAE Dirham",        "country_name": "UAE"},
 ]
 
 RATES = [
@@ -21,7 +21,7 @@ RATES = [
 ]
 
 
-def seed_database():
+def seed_database() -> None:
     for data in CURRENCIES:
         if not Currency.query.filter_by(currency_code=data["currency_code"]).first():
             db.session.add(Currency(**data))

@@ -1,7 +1,8 @@
 from pydantic import BaseModel, field_validator
-from typing import Optional
 
-ALLOWED_CURRENCIES = {"INR", "USD", "CAD", "EUR", "AUD", "AED"}
+from config import Config
+
+ALLOWED_CURRENCIES = Config.ALLOWED_CURRENCIES
 
 
 class ExchangeRateRequest(BaseModel):
@@ -22,9 +23,9 @@ class ExchangeRateRequest(BaseModel):
     @classmethod
     def must_differ(cls, v: str, info) -> str:
         from_cur = info.data.get("from_currency")
-        if from_cur and v.upper() == from_cur.upper():
+        if from_cur and v == from_cur:
             raise ValueError("from_currency and to_currency must be different.")
-        return v.upper()
+        return v
 
 
 class ExchangeRateResponse(BaseModel):

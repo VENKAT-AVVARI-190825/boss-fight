@@ -19,7 +19,7 @@ def create_app(config_name: str = "default") -> Flask:
     app.register_blueprint(currency_bp)
 
     @app.route("/")
-    def index():
+    def index() -> str:
         return app.send_static_file("index.html")
 
     return app

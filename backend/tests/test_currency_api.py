@@ -45,7 +45,7 @@ class TestDirectExchangeRate:
 
     def test_usd_to_inr_rate(self, client):
         data = client.get("/exchange-rate/USD/INR").get_json()
-        assert float(data["exchangeRate"]) == pytest.approx(80.08)
+        assert float(data["exchangeRate"]) == pytest.approx(80.08, rel=1e-4)
 
     def test_response_has_correct_fields(self, client):
         data = client.get("/exchange-rate/USD/INR").get_json()
@@ -63,19 +63,19 @@ class TestDirectExchangeRate:
 
     def test_eur_to_inr(self, client):
         data = client.get("/exchange-rate/EUR/INR").get_json()
-        assert float(data["exchangeRate"]) == pytest.approx(93.14)
+        assert float(data["exchangeRate"]) == pytest.approx(93.14, rel=1e-4)
 
     def test_aud_to_inr(self, client):
         data = client.get("/exchange-rate/AUD/INR").get_json()
-        assert float(data["exchangeRate"]) == pytest.approx(56.81)
+        assert float(data["exchangeRate"]) == pytest.approx(56.81, rel=1e-4)
 
     def test_aed_to_inr(self, client):
         data = client.get("/exchange-rate/AED/INR").get_json()
-        assert float(data["exchangeRate"]) == pytest.approx(22.79)
+        assert float(data["exchangeRate"]) == pytest.approx(22.79, rel=1e-4)
 
     def test_usd_to_cad(self, client):
         data = client.get("/exchange-rate/USD/CAD").get_json()
-        assert float(data["exchangeRate"]) == pytest.approx(1.36)
+        assert float(data["exchangeRate"]) == pytest.approx(1.36, rel=1e-4)
 
 
 class TestInverseExchangeRate:

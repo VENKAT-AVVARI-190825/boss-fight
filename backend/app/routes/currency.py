@@ -2,15 +2,13 @@ from flask import Blueprint, jsonify
 from pydantic import ValidationError
 
 from app.models import Currency, CurrencyRate
-from app.schemas import ExchangeRateRequest
+from app.schemas import ALLOWED_CURRENCIES, ExchangeRateRequest
 
 currency_bp = Blueprint("currency", __name__)
 
-ALLOWED_CURRENCIES = {"INR", "USD", "CAD", "EUR", "AUD", "AED"}
-
 
 @currency_bp.get("/currency")
-def list_currencies():
+def list_currencies() -> tuple:
     """Return all supported currencies keyed by currency code."""
     currencies = Currency.query.filter(
         Currency.currency_code.in_(ALLOWED_CURRENCIES)
@@ -20,7 +18,7 @@ def list_currencies():
 
 
 @currency_bp.get("/exchange-rate/<string:from_cur>/<string:to_cur>")
-def get_exchange_rate(from_cur: str, to_cur: str):
+def get_exchange_rate(from_cur: str, to_cur: str) -> tuple:
     """Return exchange rate between two currencies; computes inverse if needed."""
     try:
         req = ExchangeRateRequest(from_currency=from_cur, to_currency=to_cur)
