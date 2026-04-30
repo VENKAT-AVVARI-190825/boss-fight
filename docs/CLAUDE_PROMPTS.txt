@@ -320,6 +320,33 @@ ACTION:
 COMMANDS USED:
   Edit /Users/2084732/boss-fight/CLAUDE.md
 
+--------------------------------------------------------------------------------
+SECTION 17 — GITHUB REPO CREATION & PUSH
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 17:
+  "Can you create a repo in github and push the code?
+  The name of the repo is boss-fight"
+
+ACTION:
+  - Initialised git repo: git init
+  - Created .gitignore (excludes __pycache__, *.db, .env, venv, .DS_Store)
+  - Staged all project files (excluding compiled/runtime artifacts)
+  - Created initial commit with 26 files
+  - Created public GitHub repo: https://github.com/VENKAT-AVVARI-190825/boss-fight
+  - Fixed SSH host key verification by adding github.com to ~/.ssh/known_hosts
+  - Switched remote to HTTPS and pushed main branch
+
+COMMANDS USED:
+  git init
+  git add <files>
+  git commit -m "Initial commit — Currency Exchange Rate Monitor"
+  gh repo create boss-fight --public --source . --remote origin
+  ssh-keyscan github.com >> ~/.ssh/known_hosts
+  git remote set-url origin https://github.com/VENKAT-AVVARI-190825/boss-fight.git
+  git push -u origin main
+
 ================================================================================
 END OF PROMPTS LOG
 ================================================================================
