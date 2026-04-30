@@ -347,6 +347,33 @@ COMMANDS USED:
   git remote set-url origin https://github.com/VENKAT-AVVARI-190825/boss-fight.git
   git push -u origin main
 
+--------------------------------------------------------------------------------
+SECTION 18 — README.MD CREATION
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 18:
+  "Can you add a readme.md file?"
+
+ACTION:
+  - Created README.md at project root with:
+      * Overview and UI feature table
+      * Tech stack table
+      * Project structure tree
+      * Getting started: local, Docker, docker-compose instructions
+      * API reference: GET /currency and GET /exchange-rate with request/response examples
+      * Three-tier rate resolution table
+      * Supported currencies table
+      * Test suite summary (28 cases across 5 classes)
+      * Documentation index linking all docs/ files
+  - Committed and pushed to GitHub (main branch)
+
+COMMANDS USED:
+  Write /Users/2084732/boss-fight/README.md
+  git add README.md
+  git commit -m "docs: add README.md with setup, API reference, and project overview"
+  git push
+
 ================================================================================
 END OF PROMPTS LOG
 ================================================================================
