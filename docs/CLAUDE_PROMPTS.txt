@@ -415,6 +415,37 @@ COMMANDS USED:
   git commit -m "fix: apply code review recommendations"
   git push
 
+--------------------------------------------------------------------------------
+SECTION 20 — SCREENSHOTS & GITHUB PUSH
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 20:
+  "Can we test the application both in local and docker one after another
+  and take the screenshots manually?"
+  "Can you check git status and push to github?"
+
+ACTION:
+  - Started local Flask server (python run.py) on http://localhost:5000
+  - User tested and captured screenshots (local run)
+  - Stopped local server; started Docker container (currency-exchange-app) on port 5000
+  - User tested and captured screenshots (Docker run)
+  - Found 3 screenshots in screenshots/ folder, committed and pushed to GitHub
+
+FILES ADDED:
+  screenshots/Screenshot 2026-04-30 at 19.09.46.png
+  screenshots/Screenshot 2026-04-30 at 19.09.55.png
+  screenshots/Screenshot 2026-04-30 at 19.10.02.png
+
+COMMANDS USED:
+  lsof -ti:5000 | xargs kill -9
+  python run.py
+  docker run -d --name currency_exchange_app -p 5000:5000 currency-exchange-app
+  git status
+  git add screenshots/
+  git commit -m "chore: add UI screenshots for local and Docker testing"
+  git push
+
 ================================================================================
 END OF PROMPTS LOG
 ================================================================================
