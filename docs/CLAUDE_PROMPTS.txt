@@ -1,0 +1,325 @@
+================================================================================
+  CLAUDE CODE — Commands & Prompts Log
+  Project: Currency Exchange Rate Monitor
+  Date: 2026-04-30
+================================================================================
+
+--------------------------------------------------------------------------------
+SECTION 1 — PROJECT SCAFFOLDING
+--------------------------------------------------------------------------------
+
+PROMPT 1 (Project Setup):
+  "Read the PDF attached and create the boss-fight project accordingly. The
+  technology stack related instructions are given below:
+  * Utilise the Flask framework to design and develop web applications
+  * Ensure the applications are efficient, scalable, and reusable
+  * Design and develop RESTful APIs using Flask.
+  * Optimise applications for maximum speed and scalability.
+  * Ensure the performance, quality, and responsiveness of applications
+  * Ensure the front-end design aligns with the overall user experience and goals
+  * Optimise SQL queries
+  Good to have: Docker, FastAPI, celery, sqlalchemy, pydantic, asyncio, pytest"
+
+ACTION:
+  - Parsed the PDF requirements for Currency Rate Monitoring
+  - Designed project directory structure:
+      boss-fight/
+      ├── backend/  (Flask API, SQLAlchemy models, pydantic schemas)
+      ├── frontend/ (HTML/CSS/JS UI)
+      ├── docs/     (Documentation)
+      ├── Dockerfile + docker-compose.yml
+
+--------------------------------------------------------------------------------
+SECTION 2 — DATABASE DESIGN
+--------------------------------------------------------------------------------
+
+PROMPT 2 (DB Schema):
+  "Create a currency_rate table and load the given country and currency
+  information. Tables: currency (id, currency_code, currency_name, country_name)
+  and currency_rate (currency_code_from, currency_code_to, exchange_rate).
+  Seed with the provided data."
+
+COMMANDS USED:
+  - Created SQLAlchemy ORM models in backend/app/models.py
+  - Created SQL migration scripts in backend/migrations/
+      * 01_create_tables.sql  — DDL for both tables with FK constraints
+      * 02_seed_data.sql      — INSERT OR IGNORE for all seed rows
+  - Created backend/app/seed.py for programmatic seeding on startup
+
+SEED DATA LOADED:
+  Currency: INR, USD, CAD, EUR, AUD, AED
+  Rates: USD→INR(80.08), CAD→INR(61.62), USD→CAD(1.36),
+         EUR→INR(93.14), AUD→INR(56.81), AED→INR(22.79)
+
+--------------------------------------------------------------------------------
+SECTION 3 — API DEVELOPMENT
+--------------------------------------------------------------------------------
+
+PROMPT 3 (Currency List API):
+  "Create a GET /currency API that returns all currencies keyed by currency code
+  with fields: countryName, currencyCode, currencyName."
+
+COMMANDS USED:
+  - Implemented in backend/app/routes/currency.py
+  - Uses SQLAlchemy filtered query: Currency.query.filter(
+      Currency.currency_code.in_(ALLOWED_CURRENCIES)).all()
+
+PROMPT 4 (Exchange Rate API):
+  "Create GET /exchange-rate/{fromCur}/{toCur} that:
+  1. Returns direct rate if stored
+  2. Computes inverse if only reverse direction stored
+  3. Bridges via INR for pairs not directly connected
+  4. Validates currencies — only INR, USD, CAD, EUR, AUD, AED allowed"
+
+COMMANDS USED:
+  - Implemented route with three-tier lookup: direct → inverse → INR bridge
+  - Pydantic v2 ExchangeRateRequest schema validates and normalises codes
+  - Returns 400 for invalid/unsupported currencies, 404 for unavailable pairs
+
+--------------------------------------------------------------------------------
+SECTION 4 — VALIDATION
+--------------------------------------------------------------------------------
+
+PROMPT 5 (Currency Validation):
+  "Validate the currencies selected — only a limited set are allowed:
+  INR, USD, CAD, EUR, AUD, AED. Return 400 with error message for others."
+
+COMMANDS USED:
+  - backend/app/schemas.py: Pydantic ExchangeRateRequest with @field_validator
+  - Validation handles: unsupported codes, same-currency pairs, case insensitivity
+
+--------------------------------------------------------------------------------
+SECTION 5 — UI DEVELOPMENT
+--------------------------------------------------------------------------------
+
+PROMPT 6 (UI Screen):
+  "Build a UI screen with two currency dropdowns (Currency 1 and Currency 2).
+  When Currency 1 is selected, remove it from Currency 2 list.
+  After both are selected and submitted, display the exchange rate.
+  Show inverse calculation when needed."
+
+COMMANDS USED:
+  - frontend/index.html — semantic HTML5 structure
+  - frontend/styles.css — responsive CSS with CSS variables, grid layout
+  - frontend/app.js     — vanilla JS IIFE; refreshCurrency2() removes
+    Currency 1 selection from Currency 2 dropdown dynamically
+
+KEY UI FEATURES IMPLEMENTED:
+  - Dynamic dropdown filtering (Currency 1 excluded from Currency 2)
+  - Swap button to reverse selected pair
+  - Amount input for custom conversion
+  - Real-time result display with timestamp
+  - Loading spinner during API call
+  - Error display for failed/invalid requests
+  - Currency table showing all supported currencies
+
+--------------------------------------------------------------------------------
+SECTION 6 — TESTING
+--------------------------------------------------------------------------------
+
+PROMPT 7 (Test Cases):
+  "Write pytest test cases covering positive and negative scenarios for the
+  Currency API. Include: list currencies, direct rates, inverse rates,
+  bridged rates, validation errors, case insensitivity."
+
+COMMANDS USED:
+  - backend/tests/conftest.py     — pytest fixtures with in-memory SQLite
+  - backend/tests/test_currency_api.py — 30+ test cases in 6 test classes:
+      * TestListCurrencies      — 5 tests
+      * TestDirectExchangeRate  — 9 tests
+      * TestInverseExchangeRate — 4 tests
+      * TestBridgedExchangeRate — 2 tests
+      * TestValidationErrors    — 8 tests
+
+RUN COMMAND:
+  cd backend && pytest tests/ -v
+
+--------------------------------------------------------------------------------
+SECTION 7 — DOCKER
+--------------------------------------------------------------------------------
+
+PROMPT 8 (Containerisation):
+  "Create a Dockerfile and docker-compose.yml for the Flask application."
+
+COMMANDS USED:
+  - Dockerfile       — python:3.12-slim, copies backend + frontend, runs run.py
+  - docker-compose.yml — single service, port 5000, volume for DB persistence
+
+RUN COMMAND:
+  docker-compose up --build
+
+--------------------------------------------------------------------------------
+SECTION 9 — DOCKER BUILD FIX
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 9:
+  "Can you build and run the docker container to test the front end manually?"
+
+PROBLEM ENCOUNTERED:
+  Docker pip install failed with SSL certificate verification errors
+  (SSLCertVerificationError on files.pythonhosted.org) — corporate SSL inspection.
+
+ACTION:
+  - Updated Dockerfile to add --trusted-host flags to pip install:
+      --trusted-host pypi.org
+      --trusted-host pypi.python.org
+      --trusted-host files.pythonhosted.org
+  - Rebuilt image: docker build -t currency-exchange-app .
+  - Started container: docker run -d --name currency_exchange_app -p 5000:5000 currency-exchange-app
+  - Verified APIs via curl: /currency, /exchange-rate/USD/INR, /exchange-rate/INR/USD,
+    /exchange-rate/XYZ/INR (400), /exchange-rate/CAD/EUR (bridged)
+
+COMMANDS USED:
+  docker build -t currency-exchange-app .
+  docker run -d --name currency_exchange_app -p 5000:5000 currency-exchange-app
+  docker logs currency_exchange_app
+  curl -s http://localhost:5000/currency
+  curl -s http://localhost:5000/exchange-rate/USD/INR
+
+--------------------------------------------------------------------------------
+SECTION 10 — CLAUDE.MD CREATION
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 10:
+  "Can you add claude.md and update it with the project structure, tech stacks,
+  coding standards, and rules"
+
+ACTION:
+  - Created CLAUDE.md at project root with:
+      * Annotated project file tree
+      * Tech stack table (Flask, SQLAlchemy, Pydantic v2, pytest, Docker, vanilla JS)
+      * Architecture decisions (app factory, three-tier rate lookup, single ALLOWED_CURRENCIES)
+      * Python, Flask/SQLAlchemy, Pydantic, JavaScript, and CSS coding standards
+      * Rules: always-do, never-do, add-currency checklist, add-endpoint checklist
+      * Run commands for local, Docker, docker-compose, and tests
+      * Environment variables table
+
+COMMANDS USED:
+  Write /Users/2084732/boss-fight/CLAUDE.md
+
+--------------------------------------------------------------------------------
+SECTION 11 — LOCAL RUN (WITHOUT DOCKER)
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 11:
+  "help me to run the application in local without docker"
+
+ACTION:
+  - Confirmed all dependencies already installed in anaconda Python environment.
+  - Verified port 5000 was free (lsof -ti:5000).
+  - Started Flask dev server in background from backend/ directory.
+  - Confirmed UI served at http://localhost:5000 and /currency API responding.
+
+COMMANDS USED:
+  cd /Users/2084732/boss-fight/backend
+  python run.py
+  curl -s http://localhost:5000/
+  curl -s http://localhost:5000/currency
+
+--------------------------------------------------------------------------------
+SECTION 12 — PROMPTS LOG AUTO-UPDATE RULE
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 12:
+  "can you please keep updating the claude_prompts in the background as and when
+  it is required"
+
+ACTION:
+  - Saved feedback memory to persist the rule across future sessions:
+      ~/.claude/projects/-Users-2084732-boss-fight/memory/feedback_prompts_log.md
+  - Committed to appending a new dated section to docs/CLAUDE_PROMPTS.txt at the
+    end of every response where new work is done in this project.
+
+--------------------------------------------------------------------------------
+SECTION 13 — CODE REVIEW DOCUMENT
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 13:
+  "Can you add a .md file for code review with the custom instructions?"
+
+ACTION:
+  - Created docs/CODE_REVIEW.md with 10 review sections:
+      1. Pre-Review Checklist (tests, lint, branch state, prompts log)
+      2. Architecture & Structure (file placement, app factory, currency whitelist)
+      3. Backend — Python & Flask (style, routes, SQLAlchemy, Pydantic, seeding)
+      4. Backend — Tests (coverage, quality, isolation)
+      5. Exchange Rate Logic (three-tier lookup table + invariants)
+      6. Frontend (HTML semantics, JS IIFE/fetch/dropdown rules, CSS variables)
+      7. Docker (trusted-host flags, no secrets in image, port mapping)
+      8. Security (SQL injection, input validation, error response shape)
+      9. Documentation (CLAUDE_PROMPTS, CLAUDE.md, CODE_LOGIC, TEST_CASES sync)
+      10. Final Sign-off table (7-row pass/fail gate)
+
+COMMANDS USED:
+  Write /Users/2084732/boss-fight/docs/CODE_REVIEW.md
+
+--------------------------------------------------------------------------------
+SECTION 14 — PROJECT NOTE UPDATE (CASE STUDY RATIONALE)
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 14:
+  "Can you update the project_note.md for Reasons behind the choice of case study?"
+
+ACTION:
+  - Added new Section 1 "Reasons Behind the Choice of Case Study" to
+    docs/PROJECT_NOTE.md with six sub-sections:
+      1.1 Real-World Relevance — universally understood problem, easy to verify
+      1.2 Full-Stack Coverage — exercises DB, API, UI, testing, and DevOps layers
+      1.3 Non-Trivial Business Logic — three-tier rate lookup demonstrates algorithmic thinking
+      1.4 Validation as a First-Class Concern — whitelist + same-currency guard maps to Pydantic
+      1.5 Inverse Calculation Without Extra Storage — avoids data redundancy, mirrors production patterns
+      1.6 Testability — deterministic arithmetic enables precise pytest.approx() assertions
+  - Renumbered existing sections 1–5 to 2–6 to accommodate the new section.
+
+COMMANDS USED:
+  Edit /Users/2084732/boss-fight/docs/PROJECT_NOTE.md
+
+--------------------------------------------------------------------------------
+SECTION 15 — CASE STUDY PDF ADDED TO DOCS
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 15:
+  "Now can you update the docs folder with the PDF for case study?
+  The name of the PDF is MLCV-2026-6695-ClaudeE2ECaseStudy.pdf"
+
+ACTION:
+  - Located PDF at OneDrive path:
+      ~/Library/CloudStorage/OneDrive-Cognizant/Documents/Cognizant/ADP-Bench/
+      Artificial Intelligence/AI Learning Carnival/MLCV-2026-6695-ClaudeE2ECaseStudy.pdf
+  - Copied to docs/MLCV-2026-6695-ClaudeE2ECaseStudy.pdf (4.0 MB)
+
+COMMANDS USED:
+  find /Users/2084732 -name "MLCV-2026-6695-ClaudeE2ECaseStudy.pdf"
+  cp "<source path>" /Users/2084732/boss-fight/docs/
+
+--------------------------------------------------------------------------------
+SECTION 16 — CLAUDE.MD UPDATE (DOCS SYNC)
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 16:
+  "Can you update claude.md?"
+
+ACTION:
+  - Updated project structure tree in CLAUDE.md to reflect all new docs files:
+      * CODE_REVIEW.md        — code review checklist with custom instructions
+      * PROJECT_NOTE.md       — description updated to include case study rationale
+      * MLCV-2026-6695-ClaudeE2ECaseStudy.pdf — original problem statement PDF
+  - Added three new rules to "What to Always Do" section:
+      * Use CODE_REVIEW.md checklist before marking any change complete
+      * Keep PROJECT_NOTE.md updated if rationale or framework decisions change
+      * Refer to the PDF for requirements if behaviour is ambiguous
+
+COMMANDS USED:
+  Edit /Users/2084732/boss-fight/CLAUDE.md
+
+================================================================================
+END OF PROMPTS LOG
+================================================================================

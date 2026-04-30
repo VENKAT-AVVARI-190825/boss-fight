@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currency Exchange Rate Monitor</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <header class="header">
+      <div class="header-inner">
+        <span class="header-icon">&#x1F4B1;</span>
+        <h1>Currency Exchange Rate Monitor</h1>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Result display -->
+      <section class="result-card" id="resultCard" aria-live="polite">
+        <p class="result-label" id="resultLabel">Select currencies to see the exchange rate</p>
+        <p class="result-rate" id="resultRate"></p>
+        <p class="result-timestamp" id="resultTimestamp"></p>
+      </section>
+
+      <!-- Converter form -->
+      <section class="converter-card">
+        <div class="converter-row">
+          <div class="input-group">
+            <label for="amount">Amount</label>
+            <input
+              type="number"
+              id="amount"
+              value="1"
+              min="0.01"
+              step="any"
+              placeholder="Enter amount"
+            />
+          </div>
+          <div class="input-group">
+            <label for="currency1">From Currency</label>
+            <select id="currency1">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="converter-row">
+          <div class="input-group">
+            <label for="convertedAmount">Converted Amount</label>
+            <input type="text" id="convertedAmount" readonly placeholder="Result" />
+          </div>
+          <div class="input-group">
+            <label for="currency2">To Currency</label>
+            <select id="currency2">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" id="convertBtn" disabled>Convert</button>
+          <button class="btn-secondary" id="swapBtn">&#x21C4; Swap</button>
+        </div>
+
+        <p class="error-msg" id="errorMsg" role="alert"></p>
+      </section>
+
+      <!-- Currency table -->
+      <section class="table-card">
+        <h2>Supported Currencies</h2>
+        <table id="currencyTable">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Currency Name</th>
+              <th>Country</th>
+            </tr>
+          </thead>
+          <tbody id="currencyTableBody"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Currency Exchange Rate Monitor &mdash; Built with Flask &amp; SQLAlchemy</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

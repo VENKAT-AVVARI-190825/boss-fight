@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  currency-api:
+    build: .
+    container_name: currency_exchange_app
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=sqlite:////app/backend/currency.db
+    volumes:
+      - db_data:/app/backend
+    restart: unless-stopped
+
+volumes:
+  db_data:
