@@ -46,6 +46,9 @@ boss-fight/
 │   ├── styles.css                   # Responsive layout (CSS variables, grid)
 │   └── app.js                       # Vanilla JS IIFE: dropdowns, fetch, swap, error handling
 │
+├── screenshots/
+│   └── *.png                                 # UI screenshots captured during local and Docker testing
+│
 └── docs/
     ├── CLAUDE_PROMPTS.txt                    # All Claude commands/prompts used (required deliverable)
     ├── CODE_LOGIC.md                         # Architecture + SQL optimisation notes
@@ -159,6 +162,7 @@ No separate web server is needed in development or Docker.
 - Keep `docs/PROJECT_NOTE.md` updated if the case study rationale or framework decisions change.
 - Refer to `docs/MLCV-2026-6695-ClaudeE2ECaseStudy.pdf` for the original requirements
   if there is any ambiguity about expected behaviour.
+- Store all UI screenshots in `screenshots/` with filenames that include a visible date/timestamp.
 
 ### What to Never Do
 - Do not write raw SQL strings inside route handlers or models.
