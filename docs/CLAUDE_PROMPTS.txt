@@ -446,6 +446,25 @@ COMMANDS USED:
   git commit -m "chore: add UI screenshots for local and Docker testing"
   git push
 
+--------------------------------------------------------------------------------
+SECTION 21 — CLAUDE.MD UPDATE (SCREENSHOTS FOLDER)
+--------------------------------------------------------------------------------
+Date: 2026-04-30
+
+PROMPT 21:
+  "Do we need to update the claude.md now?"
+
+ACTION:
+  - Added screenshots/ folder to project structure tree in CLAUDE.md
+  - Added rule: store all UI screenshots in screenshots/ with filenames
+    that include a visible date/timestamp
+  - Committed and pushed to GitHub
+
+COMMANDS USED:
+  Edit /Users/2084732/boss-fight/CLAUDE.md
+  git add CLAUDE.md
+  git commit + git push
+
 ================================================================================
 END OF PROMPTS LOG
 ================================================================================
